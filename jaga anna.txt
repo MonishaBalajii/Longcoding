@@ -1,0 +1,297 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+class HouseRentApp {
+    private static List<User> users = new ArrayList<>();
+    private static List<HouseDetails> houseDetails = new ArrayList<>();
+    private static List<PaymentDetails> paymentDetails = new ArrayList<>();
+    private static List<Bookings> bookingsList = new ArrayList<>();
+
+    private static int bookingCount = 0;
+
+    static class User {
+        private int userID;
+        private String name;
+        private String email;
+        private String password;
+        private String role;
+        private long phnNo;
+        private long aadharNo;
+
+        public User(int userID, String name, String email, String password, String role,long phnNo,long aadharNo) {
+            this.userID = userID;
+            this.name = name;
+            this.email = email;
+            this.password = password;
+            this.role = role;
+            this.phnNo = phnNo;
+            this.aadharNo = aadharNo;
+        }
+    }
+
+    static class HouseDetails {
+        private int houseId;
+        private String houseType;
+        private int sqrFeet;
+        private int rentPrice;
+
+        public HouseDetails(int houseId, String houseType, int sqrFeet, int rentPrice) {
+            this.houseId = houseId;
+            this.houseType = houseType;
+            this.sqrFeet = sqrFeet;
+            this.rentPrice = rentPrice;
+        }
+    }
+
+    static class PaymentDetails {
+        private int paymentId;
+        private String paymentMethod;
+        private String cardNo;
+        private int month;
+        private int year;
+        private int cvv;
+        private double amount;
+        private String paymentStatus;
+
+        public PaymentDetails(int paymentId, String paymentMethod, String cardNo, int month, int year, int cvv, double amount, String paymentStatus) {
+            this.paymentId = paymentId;
+            this.paymentMethod = paymentMethod;
+            this.cardNo = cardNo;
+            this.month = month;
+            this.year = year;
+            this.cvv = cvv;
+            this.amount = amount;
+            this.paymentStatus = paymentStatus;
+        }
+    } 
+
+    static class Bookings {
+        private int bookingID;
+        private int userID;
+        private LocalDateTime bookedOn;
+        private List<HouseDetails> houseDetails;
+
+        public Bookings(int bookingID, int userID, LocalDateTime bookedOn, List<HouseDetails> houseDetails) {
+            this.bookingID = bookingID;
+            this.userID = userID;
+            this.bookedOn = bookedOn;
+            this.houseDetails = houseDetails;
+        }
+    }
+
+    static class HouseListings {
+        private int userID;
+        private String name;
+        private String email;
+        private String password;
+        private String role;
+        private long phnNo;
+        private long aadharNo;
+        private List<HouseDetails> bookHouseDetails;
+public void welcome() {
+            System.out.println("Hi Welcome Admin");
+            System.out.println(name);
+        }
+
+        public HouseListings(int userID, String name, String email, String password, String role,long phnNo,long aadharNo) {
+            this.userID = userID;
+            this.name = name;
+            this.email = email;
+            this.password = password;
+            this.role = role;
+            this.phnNo = phnNo;
+            this.aadharNo = aadharNo;
+            this.bookHouseDetails = new ArrayList<>();
+        }
+
+
+        public void bookingForCustomer() {
+            boolean stayInCustomerMenu = true;
+
+            HouseDetails house1 = new HouseDetails(1, "1BK", 1200, 2000);
+            HouseDetails house2 = new HouseDetails(2, "2BHK", 1500, 5000);
+            HouseDetails house3 = new HouseDetails(3, "3BHK", 1800, 10000);
+
+            houseDetails.add(house1);
+            houseDetails.add(house2);
+            houseDetails.add(house3);
+
+            while (stayInCustomerMenu) {
+                System.out.println("\n******************************");
+                System.out.println("Customer Menu");
+                System.out.println("1. List Of Houses");
+                System.out.println("2. Select The House");
+                System.out.println("3. Booking History");
+                System.out.println("4. Logout");
+                System.out.print("Enter your Choice: ");
+
+                Scanner scanner = new Scanner(System.in);
+                int choice = scanner.nextInt();
+
+                if (choice == 1) {
+                    for (HouseDetails house : houseDetails) {
+                        System.out.println("House No: " + house.houseId);
+                        System.out.println("House Type: " + house.houseType);
+                        System.out.println("House sqr_feet: " + house.sqrFeet);
+                        System.out.println("House Rent: " + house.rentPrice);
+                        System.out.println("---------------------------------------------");
+                    }
+                } else if (choice == 2) {
+                    while (true) {
+                        System.out.println("House List:");
+                        for (HouseDetails house : houseDetails) {
+                            System.out.println(house.houseId + " " + house.houseType + " " + house.sqrFeet + " " + house.rentPrice);
+                        }
+
+                        System.out.print("Enter the ID of the house to book (or 0 to stop adding): ");
+                        int houseId = scanner.nextInt();
+
+                        if (houseId == 0) {
+                            break;
+                        }
+
+                        HouseDetails selectedHouse = null;
+                        for (HouseDetails house : houseDetails) {
+                            if (house.houseId == houseId) {
+                                selectedHouse = house;
+                                break;
+                            }
+                        }
+
+                        if (selectedHouse == null) {
+                            System.out.println("Invalid house ID. Please try again.");
+                        } else {
+                            HouseDetails cartItem = new HouseDetails(
+                                    selectedHouse.houseId,
+                                    selectedHouse.houseType,
+                                    selectedHouse.sqrFeet,
+                                    selectedHouse.rentPrice
+                            );
+                            bookHouseDetails.add(cartItem);
+                            System.out.println("Item added to booking successfully.");
+
+                            System.out.print("Do you want to see the booking? (y/n): ");
+                            String viewCart = scanner.next();
+
+                            if (viewCart.equalsIgnoreCase("y")) {
+                                System.out.println("Your Booking:");
+                                for (HouseDetails item : bookHouseDetails) {
+                                    System.out.println("House ID: " + item.houseId);
+                                    System.out.println("House Type: " + item.houseType);
+                                    System.out.println("Sqr_feet: " + item.sqrFeet);
+                                    System.out.println("Rent_Price: " + item.rentPrice);
+                                    System.out.println("---------------------------------------------");
+                                }
+
+                                System.out.println("Payment Options:");
+                                System.out.println("1. Card");
+                                System.out.println("2. UPI");
+
+                                System.out.print("Choose a payment option: ");
+                                int paymentChoice = scanner.nextInt();
+
+                                if (paymentChoice == 1) {
+                                    System.out.println("Payment successful. Thank you for using card.");
+                                } else if (paymentChoice == 2) {
+                                    System.out.println("Payment successful. Thank you for using UPI.");
+                                } else {
+                                    System.out.println("Invalid payment option.");
+                                }
+
+                                List<HouseDetails> bookingData = new ArrayList<>(bookHouseDetails);
+                                Bookings booking = new Bookings(bookingCount, userID, LocalDateTime.now(), bookingData);
+                                bookingsList.add(booking);
+                                bookingCount++;
+                                break;
+                            }
+                        }
+                    }
+                } else if (choice == 3) {
+                    int bookingId = 1;
+                    for (Bookings booking : bookingsList) {
+                        System.out.println("Booking ID: " + booking.bookingID);
+                        System.out.println("User ID: " + booking.userID);
+                        System.out.println("Booked On: " + booking.bookedOn.format(DateTimeFormatter.ISO_DATE_TIME));
+                        for (HouseDetails item : booking.houseDetails) {
+                            System.out.println("Details: " + item.houseId + " " + item.houseType + " " + item.sqrFeet + " " + item.rentPrice);
+                        }
+                        System.out.println("---------------------------------------------");
+                        bookingId++;
+                    }
+                } else if (choice == 4) {
+                    System.out.println("Logout Successfully");
+                    stayInCustomerMenu = false;
+                } else {
+                    System.out.println("Invalid Entry");
+                }
+            }
+        }
+    }
+
+    static class AdminFlow {
+        private int userID;
+        private String name;
+        private String email;
+        private String password;
+        private String role;
+public void welcome() {
+            System.out.println("Hi Welcome Admin");
+            System.out.println(name);
+        }
+
+
+        public AdminFlow(int userID, String name, String email, String password, String role) {
+            this.userID = userID;
+            this.name = name;
+            this.email = email;
+            this.password = password;
+            this.role = role;
+        }
+    }
+
+    public static void main(String[] args) {
+        User user1 = new User(1, "Sanjay", "sanjay@gmail.com", "sanjay123", "Renter",99999999L,123245657654L);
+        users.add(user1);
+        User user2 = new User(2, "Rahul", "ragul@gmail.com", "rahul123", "Admin",2654371578L,875782682682L);
+        users.add(user2);
+        User user3 = new User(3, "Arjunan", "arjunan@gmail.com", "arjunan123", "Owner",8767654253L,765544325725L);
+        users.add(user3);
+
+        //Scanner sc = new Scanner(System.in);
+        //System.out.print("Enter your UserID: ");
+        // int userID = sc.nextInt();
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter your email: ");
+        String email = scanner.next();
+        System.out.print("Enter your password: ");
+        String password = scanner.next();
+
+        User loginUser = validateLogin(email, password);
+
+        if (loginUser != null) {
+            System.out.println("Login Success");
+            if (loginUser.role.equals("Admin")) {
+                AdminFlow admin = new AdminFlow(loginUser.userID, loginUser.name, loginUser.email, loginUser.password, loginUser.role);
+                admin.welcome();
+            } else if (loginUser.role.equals("Renter")) {
+                HouseListings houseListings = new HouseListings(loginUser.userID, loginUser.name, loginUser.email, loginUser.password, loginUser.role);
+                houseListings.welcome();
+                houseListings.bookingForCustomer();
+        } else {
+            System.out.println("Login Failed");
+        }
+    }
+}
+public static User validateLogin(String email, String password) {
+  for (User user : users) {
+     if (user.email.equals(email) && user.password.equals(password)) {
+            return user;
+
+      }
+  }
+return null;
+}
+}
